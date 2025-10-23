@@ -325,7 +325,7 @@ export class DataLoaderService {
     try {
       console.log("Loading remuneration data from JSON file...");
 
-      const response = await fetch("./assets/renumerarions-export.json");
+      const response = await fetch("./assets/renumerations-export.json");
 
       if (!response.ok) {
         throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
