@@ -6,7 +6,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Build outputs
-dist/
+
 build/
 out/
 
