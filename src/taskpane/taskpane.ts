@@ -193,7 +193,10 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
 
   let currentDataRow = 11; // A12 starts at row index 9 (0-based)
 
-  
+  // Load components that are pensionable
+  const pensionableComponents = dataLoader.getPensionableComponents(partnerId);
+  console.log('Pensionable Components:', pensionableComponents);
+
   // Generate holiday allowances data (starting from A10)  
   const holidayAllowancesData = dataLoader.generateHolidayAllowances(partnerId);
   console.log('Holiday Allowances Data:', holidayAllowancesData);
@@ -237,10 +240,22 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
     currentDataRow = await addComponent(worksheet, "Reimbursements", reimbursementsData, currentDataRow);
   }
 
+  // Generate travel expenses data
+  const travelExpensesData = dataLoader.generateTravelExpensesData(partnerId);
+  if (travelExpensesData.length > 0) {
+    currentDataRow = await addComponent(worksheet, "Travel Expenses", travelExpensesData, currentDataRow);
+  }
+
   // Generate payments data (anniversary payments)
   const paymentsData = dataLoader.generatePaymentsData(partnerId);
   if (paymentsData.length > 0) {
     currentDataRow = await addComponent(worksheet, "Payments", paymentsData, currentDataRow);
+  }
+
+  // Generate wage increments data
+  const wageIncrementsData = dataLoader.generateWageIncrementsData(partnerId);
+  if (wageIncrementsData.length > 0) {
+    currentDataRow = await addComponent(worksheet, "Wage Increments", wageIncrementsData, currentDataRow);
   }
   
   // Auto-fit columns
@@ -251,7 +266,7 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
   columnB.format.columnWidth = 100;
   const cellB8 = worksheet.getCell(7, 1); // B8 (0-based indexing: row 7, col 1)
   cellB8.format.wrapText = false;
-  const columnCF = worksheet.getRange("C:F");
+  const columnCF = worksheet.getRange("C:G");
   columnCF.format.columnWidth = 100;
   
   await context.sync();
