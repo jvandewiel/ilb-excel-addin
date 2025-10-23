@@ -25,7 +25,7 @@ git commit -m "Initial commit: ILB Excel Add-in"
 
 3. **Connect Local to Remote**:
 ```bash
-git remote add origin https://github.com/YOUR-USERNAME/ilb-excel-addin.git
+git remote add origin https://github.com/jvandewiel/ilb-excel-addin.git
 git branch -M main
 git push -u origin main
 ```
@@ -44,7 +44,7 @@ git push -u origin main
 
 3. **Build Configuration**:
    - GitHub will automatically build and deploy
-   - Your add-in will be available at: `https://YOUR-USERNAME.github.io/ilb-excel-addin/`
+   - Your add-in will be available at: `https://jvandewiel.github.io/ilb-excel-addin/`
 
 ### Step 3: Update Manifest for GitHub Pages
 
@@ -67,12 +67,12 @@ Create a GitHub-specific manifest file:
   <Description DefaultValue="Inlenersbeloning data loader for Excel with remuneration component analysis."/>
   
   <!-- GitHub Pages URLs -->
-  <IconUrl DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://github.com/YOUR-USERNAME/ilb-excel-addin"/>
+  <IconUrl DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://github.com/jvandewiel/ilb-excel-addin"/>
   
   <AppDomains>
-    <AppDomain>https://YOUR-USERNAME.github.io</AppDomain>
+    <AppDomain>https://jvandewiel.github.io</AppDomain>
   </AppDomains>
   
   <Hosts>
@@ -80,7 +80,7 @@ Create a GitHub-specific manifest file:
   </Hosts>
   
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/taskpane.html"/>
+    <SourceLocation DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/taskpane.html"/>
   </DefaultSettings>
   
   <Permissions>ReadWriteDocument</Permissions>
@@ -129,14 +129,14 @@ Create a GitHub-specific manifest file:
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/assets/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/assets/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/assets/icon-80.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/YOUR-USERNAME/ilb-excel-addin"/>
-        <bt:Url id="Commands.Url" DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://YOUR-USERNAME.github.io/ilb-excel-addin/taskpane.html"/>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/jvandewiel/ilb-excel-addin"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://jvandewiel.github.io/ilb-excel-addin/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with ILB Excel Tool"/>
@@ -198,7 +198,7 @@ jobs:
 ### Method 1: Direct Manifest Link
 Share the manifest URL directly:
 ```
-https://YOUR-USERNAME.github.io/ilb-excel-addin/manifest-github.xml
+https://jvandewiel.github.io/ilb-excel-addin/manifest-github.xml
 ```
 
 Recipients can:
@@ -209,7 +209,7 @@ Recipients can:
 ### Method 2: Repository Clone
 Share your repository URL:
 ```
-https://github.com/YOUR-USERNAME/ilb-excel-addin
+https://github.com/jvandewiel/ilb-excel-addin
 ```
 
 Recipients can:
@@ -242,7 +242,7 @@ Add these scripts to your `package.json`:
 If you have a custom domain:
 1. Create `CNAME` file in repository root
 2. Add your domain name to the file
-3. Configure DNS CNAME record pointing to `YOUR-USERNAME.github.io`
+3. Configure DNS CNAME record pointing to `jvandewiel.github.io`
 
 ## 📋 Checklist for GitHub Deployment
 
