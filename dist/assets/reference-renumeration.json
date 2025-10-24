@@ -1,0 +1,816 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "title": "Inlenersbeloning van YER",
+  "intermediaryID": null,
+  "startDate": "2026-01-01",
+  "publishDate": "2025-10-24T12:00:00+02:00",
+  "lenderVersion": 1,
+  "totalVersions": 1,
+  "company": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "businessName": "YER Nederland B.V.",
+    "commerceNumber": "34131598",
+    "legalForm": "Besloten Vennootschap",
+    "sbiCodes": [
+      "70201",
+      "78202",
+      "78100"
+    ],
+    "employees": null,
+    "phoneNumber": "0889371100",
+    "addresses": [
+      {
+        "type": "Bezoekadres",
+        "street": "Hogehilweg",
+        "houseNumber": 16,
+        "houseNumberAddition": null,
+        "postalCode": "1101CD",
+        "city": "Asmterdam",
+        "country": "Nederland"
+      }
+    ]
+  },
+  "publisher": {
+    "name": "Joost van de Wiel",
+    "email": "joostvandewiel@yer.nl",
+    "function": "Informatie Analist",
+    "phone": "0647061489"
+  },
+  "baseOrganisationData": {
+    "isClassifiable": true,
+    "szCode": 633,
+    "hasAffiliatedBranch": true,
+    "affiliatedBranch": "Uitzendbureaus",
+    "affiliatedBranchID": 0,
+    "hasPayroll": false,
+    "hasCLA": true,
+    "claType": "Bedrijfstak CAO",
+    "isCLAApplicable": true,
+    "cla": "ABU Cao voor Uitzendkrachten",
+    "subCLA": null,
+    "companyCLAName": null,
+    "hasProprietaryRemuneration": false,
+    "hasFunctionExists": false,
+    "hasComparableFunction": false,
+    "hasFunctionRemuneration": false,
+    "hasRemunerationExists": false,
+    "unclassifiableFullTimeHours": null,
+    "unclassifiableFullTimeHoursPer": null,
+    "unclassifiableFunctions": []
+  },
+  "workingHours": {
+    "fullTimeHours": 38,
+    "fullTimeHoursPer": "Per week",
+    "fullTimeHoursPerID": 0,
+    "workingHoursComments": "Fulltime 38 uur per week",
+    "wHRRegulationID": 0,
+    "singleRegulationTypeID": 0,
+    "whrApplytoPayTypesID": 0
+  },
+  "functionGroups": [
+    {
+      "id": "b10b0487-562a-41ec-8d93-36b477f945b1",
+      "code": "1",
+      "codeID": 0,
+      "tableType": "Maandsalaris",
+      "tableTypeID": 1,
+      "hasHourRateCalculationMethods": false,
+      "hasCustomHourRateCalculationMethods": false,
+      "steps": [
+        {
+          "index": 1,
+          "stepTitle": "Minimum",
+          "otherStepTitle": null,
+          "salary": 2629.7,
+          "hourWage": 15.91,
+          "functionGroupStepID": 31,
+          "ageStepID": null
+        },
+        {
+          "index": 2,
+          "stepTitle": "Maximum",
+          "otherStepTitle": null,
+          "salary": 3506.27,
+          "hourWage": 21.22,
+          "functionGroupStepID": 98,
+          "ageStepID": null
+        }
+      ],
+      "functions": [
+        {
+          "id": "ecee50ac-ca1e-4515-9bba-cc7038c3e200",
+          "title": "Functiegroep 1",
+          "referenceTitle": "Schaal 1",
+          "referenceTitleDropdownID": 0,
+          "workingHours": "Maandag t\/m vrijdag, 8:00-17:00",
+          "workingHoursComments": null,
+          "serviceType": "Normale dienst",
+          "serviceTypeID": 1,
+          "startingStepType": "Het startsalaris wordt bepaald op basis van de ervaring van de medewerker in een nagenoeg gelijke functie",
+          "startingStepTypeID": 2,
+          "functionStartingStep": null,
+          "functionStartingStepIndex": null,
+          "scalesComment": null
+        }
+      ],
+      "hourWageCalculations": []
+    }
+  ],
+  "paidBreaks": {
+    "id": "ad0d7edb-8a99-412c-8d7f-47594bc69805",
+    "hasPaidBreaks": false,
+    "items": []
+  },
+  "wageIncrements": {
+    "hasWageIncrements": false,
+    "hasRetroactiveWageIncrements": false,
+    "hasYouthScales": false,
+    "youthApplication": null,
+    "youthApplicationID": 0,
+    "otherYouthApplication": null,
+    "youthScalesDisclaimer": null,
+    "isEligibleForIncrement": false,
+    "incrementData": [],
+    "retroactiveIncrementData": [],
+    "periodicalData": []
+  },
+  "allowances": {
+    "id": "5004ea15-812f-4844-9cf5-73421547a56a",
+    "hasAllowances": true,
+    "allowances": [
+      {
+        "id": "2caecc4f-0b78-487f-9cff-be020a714f9a",
+        "typeTitle": "Overige toeslag",
+        "typeCode": "Other",
+        "typeOther": "Project toeslag",
+        "name": null,
+        "conditions": "Project toeslag",
+        "phaseOutSchema": null,
+        "allowanceComponents": [
+          {
+            "id": "5590e996-b176-4c4d-bf07-2d3e97467adc",
+            "isDescribedAsAmount": true,
+            "amount": 0,
+            "amountType": {
+              "value": "Amount",
+              "otherValue": null
+            },
+            "basedOn": "Fixed",
+            "basedOnOther": null,
+            "intervalAmount": 1,
+            "interval": "Hourly",
+            "hasTimelyConditions": false,
+            "shiftWorkAmount": {
+              "value": null,
+              "otherValue": null
+            },
+            "timeAndDaysUsage": {
+              "value": null
+            },
+            "applicableTimeFrom": "00:00:00",
+            "applicableTimeTo": "00:00:00",
+            "applicableAfterHoursAmount": 0,
+            "applicableAfterHoursIntervalAmount": 1,
+            "applicableAfterHoursIntervalValue": null,
+            "description": null,
+            "conditions": null,
+            "appliesToAllFunctions": true,
+            "weekdays": [],
+            "cumulatesWith": [],
+            "dependencyFunctions": []
+          }
+        ]
+      }
+    ]
+  },
+  "reimbursementsData": {
+    "id": "37d87328-14bd-4e91-afff-9654311d39d0",
+    "hasReimbursements": true,
+    "reimbursements": [
+      {
+        "id": "2c26a598-4f73-4d17-ac55-6e39e9e13059",
+        "name": "Thuiswerkvergoeding",
+        "typeCode": "RemoteWorkAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 2.4,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Daily",
+        "description": "Thuiswerkvergoeding per dag",
+        "conditions": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "00f3716d-07aa-4df8-b9c4-2a4c649f8faa",
+        "name": "Telefoonvergoeding",
+        "typeCode": "PhoneAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 64,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Vaste mobiel en abonnement vergoeding per maand, netto",
+        "conditions": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "b93aa01f-13e5-4a37-b67d-455c6349ce16",
+        "name": "Anders, namelijk...",
+        "typeCode": "Other",
+        "isDescribedAsAmount": true,
+        "amount": 50,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "3 coachingssessies 1 uur + voorberieding en reistijd, 420 \nNew Heroes 60\nOpen-up 120",
+        "conditions": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "eeb004b2-7a26-47cf-913c-1f2fc3050003",
+        "name": "Anders, namelijk...",
+        "typeCode": "Other",
+        "isDescribedAsAmount": true,
+        "amount": 52,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": null,
+        "conditions": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "3637a625-f29a-4754-bcda-6c2f49169f07",
+        "name": "Reiskostenvergoeding",
+        "typeCode": "TravelAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 607.5,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Lease auto Cat A: \u20ac45,00 x 18= \u20ac 810,00 * 0.75 = \u20ac 607,50",
+        "conditions": "Indien gekozen",
+        "dependencyFunctions": []
+      },
+      {
+        "id": "f5b9134e-5177-48b5-97e3-8c7fba5b814c",
+        "name": "Reiskostenvergoeding",
+        "typeCode": "TravelAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 742.5,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Lease auto Cat B: \u20ac55,00 x 18= \u20ac 990,00 * 0.75 = \u20ac 742,50",
+        "conditions": "Indien gekozen",
+        "dependencyFunctions": []
+      },
+      {
+        "id": "7f93f95c-3ae0-4087-9f41-7322bf6e57a6",
+        "name": "Reiskostenvergoeding",
+        "typeCode": "TravelAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 843.75,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Lease auto Cat C: \u20ac62,50 x 18= \u20ac 1125,00 * 0.75 = \u20ac 843,75",
+        "conditions": "Indien gekozen",
+        "dependencyFunctions": []
+      },
+      {
+        "id": "c978a3b2-78a4-4b2a-b634-11be1a1c9750",
+        "name": "Reiskostenvergoeding",
+        "typeCode": "TravelAllowance",
+        "isDescribedAsAmount": true,
+        "amount": 978.75,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Lease auto Cat D: \u20ac72,50 x 18= \u20ac 1305,00 * 0.75 = \u20ac 978,75",
+        "conditions": "Indien gekozen",
+        "dependencyFunctions": []
+      }
+    ]
+  },
+  "travelExpensesData": {
+    "id": "c6933bdd-1e6b-4a4e-bf18-8f26524bddd0",
+    "hasTravelExpenses": false,
+    "reimbursementAsWorkingHours": {
+      "value": "CompensationTimeAndOrMoney"
+    },
+    "travelExpenses": []
+  },
+  "individualChoiceBudget": {
+    "id": "ae95c50b-e141-42cc-b355-34783f77d88b",
+    "hasIndividualChoiceBudget": false,
+    "amount": 18,
+    "amountType": {
+      "value": "Percentage",
+      "otherValue": null
+    },
+    "basedOn": "BaseWage",
+    "basedOnOther": null,
+    "intervalAmount": 1,
+    "interval": "Yearly",
+    "items": []
+  },
+  "paymentsData": {
+    "id": "3a8f0483-8e06-4ce4-a471-5925b03aab29",
+    "hasAdditionalSocialSecurityArrangements": false,
+    "hasAnniversaryPayments": false,
+    "hasFixedPayments": false,
+    "hasOneTimePayments": false,
+    "hasVariablePayments": true,
+    "additionalSecurityArrangements": [],
+    "anniversaryPayments": [],
+    "fixedPayments": [],
+    "oneTimePayments": [],
+    "variablePayments": [
+      {
+        "id": "fb3f39e7-dca0-4340-8e90-5ae3ba4e5fc7",
+        "hasMinMaxAmount": false,
+        "amount": 100,
+        "minAmount": null,
+        "maxAmount": null,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "name": "Other",
+        "typeOther": "Aanvulling ouderschapsverlof",
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "date": "01\/10",
+        "hasApplicableDate": false,
+        "applicableDateTo": null,
+        "applicableDateFrom": null,
+        "description": null,
+        "appliesToAllFunctions": true,
+        "isProportional": false,
+        "proportionalBasedOn": {
+          "value": null
+        },
+        "proportionalDescription": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "17bbfe16-55ca-4828-bcf6-f53abfe44611",
+        "hasMinMaxAmount": false,
+        "amount": 100,
+        "minAmount": null,
+        "maxAmount": null,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "name": "Other",
+        "typeOther": "Aanvulling geboorteverlof",
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "date": "01\/10",
+        "hasApplicableDate": false,
+        "applicableDateTo": null,
+        "applicableDateFrom": null,
+        "description": null,
+        "appliesToAllFunctions": true,
+        "isProportional": false,
+        "proportionalBasedOn": {
+          "value": null
+        },
+        "proportionalDescription": null,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "f79243bc-7f49-4292-bfe0-18a3bd5a1d85",
+        "hasMinMaxAmount": false,
+        "amount": 100,
+        "minAmount": null,
+        "maxAmount": null,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "name": "Other",
+        "typeOther": "Aanvulling kort zorgverlof",
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "date": "01\/10",
+        "hasApplicableDate": false,
+        "applicableDateTo": null,
+        "applicableDateFrom": null,
+        "description": null,
+        "appliesToAllFunctions": true,
+        "isProportional": false,
+        "proportionalBasedOn": {
+          "value": null
+        },
+        "proportionalDescription": null,
+        "dependencyFunctions": []
+      }
+    ]
+  },
+  "holidayAllowances": [
+    {
+      "id": "b8089b6d-a47a-400e-903b-afdc8115de16",
+      "amount": 8.33,
+      "amountType": {
+        "value": "Percentage",
+        "otherValue": null
+      },
+      "intervalAmount": 1,
+      "interval": "Yearly",
+      "basedOn": "GrossSalary",
+      "isPartOfIndividualChoiceBudget": false,
+      "description": null,
+      "appliesToAllFunctions": true,
+      "dependencyFunctions": []
+    }
+  ],
+  "sickPay": {
+    "id": "4b78fd64-41e3-4d07-b9e4-a47185543c44",
+    "sickPayCondition": null,
+    "hasWaitingDays": false,
+    "amount": 0,
+    "waitingDaysCondition": null,
+    "hasWaitingDaysCompensation": false,
+    "compensationAmount": 0,
+    "waitingDaysCompensationDescription": null,
+    "sickPayAmounts": [
+      {
+        "id": "9c419bbe-1888-4626-bf6f-14c7c2973176",
+        "amount": 100,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "sickPayYear": {
+          "value": "1_26_weeks"
+        },
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Hourly"
+      },
+      {
+        "id": "43377acb-56cf-4061-abcb-adc1b410eff9",
+        "amount": 85,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "sickPayYear": {
+          "value": "27_52_weeks"
+        },
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Hourly"
+      },
+      {
+        "id": "7d88250b-21b8-44b6-a155-9b5a91d696ba",
+        "amount": 85,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "sickPayYear": {
+          "value": "53_78_weeks"
+        },
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Hourly"
+      },
+      {
+        "id": "fc9a9979-4e08-4700-90d5-526b92937e19",
+        "amount": 85,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "sickPayYear": {
+          "value": "79_104_weeks"
+        },
+        "basedOn": "GrossSalary",
+        "basedOnOther": null,
+        "intervalAmount": 1,
+        "interval": "Hourly"
+      }
+    ]
+  },
+  "leave": {
+    "id": "5a3d34cd-c4a2-4de0-a95c-3e54ae0762a6",
+    "hasWorkingHoursReduction": false,
+    "isWorkingHoursReductionDistinct": false,
+    "hasVacationDays": true,
+    "isVacationDayDistinct": false,
+    "hasSpecialLeave": true,
+    "hasAdditionalWAZO": false,
+    "hasMandatoryLeave": false,
+    "hasHoliday": true,
+    "holidayCount": 6,
+    "holidayCountExplanation": "Feestdagen",
+    "workingHoursReductions": [
+      {
+        "id": "887c2df1-80de-49e3-b3fa-c6e14b45588c",
+        "targetGroup": {
+          "value": null,
+          "otherValue": null
+        },
+        "age": {
+          "from": 0,
+          "to": 0
+        },
+        "employmentDuration": {
+          "from": 0,
+          "to": 0
+        },
+        "amount": 5.2,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "intervalAmount": 1,
+        "interval": "Hourly",
+        "basedOn": "BaseWage",
+        "basedOnOther": null,
+        "description": "Bij feitelijke werkweek van 40 uur, beschikbaar gesteld in het persoonlijk budget",
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "isPartOfIndividualChoiceBudget": true,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ],
+    "vacationDays": [
+      {
+        "id": "75233dc6-fde5-4e43-9d7b-9da192a5b2d1",
+        "targetGroup": {
+          "value": null,
+          "otherValue": null
+        },
+        "age": {
+          "from": 0,
+          "to": 0
+        },
+        "employmentDuration": {
+          "from": 0,
+          "to": 0
+        },
+        "amount": 25,
+        "amountType": {
+          "value": "Days",
+          "otherValue": null
+        },
+        "intervalAmount": 1,
+        "interval": "Yearly",
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "isPartOfIndividualChoiceBudget": false,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ],
+    "specialLeave": [
+      {
+        "id": "631924e6-c399-4080-a9b6-1937ba954df6",
+        "name": "Ouderschapsverlof",
+        "occasion": "ParentalLeave",
+        "occasionOther": null,
+        "amount": 100,
+        "amountType": {
+          "value": "Other",
+          "otherValue": "%"
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ],
+    "additionalParentalLeave": [],
+    "mandatoryLeave": [],
+    "holidays": [
+      {
+        "id": "56e97455-2643-4265-8f5e-fb12b713de87",
+        "name": "Nieuwjaarsdag",
+        "type": "NewYearsDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "a919e3b3-1a78-422d-b0b8-9f20fba1c9f8",
+        "name": "Eerste pinksterdag",
+        "type": "FirstPentecostDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "68b2c6f5-acc0-43e1-a5bb-6ea143c48d8e",
+        "name": "Eerste kerstdag",
+        "type": "FirstChristmasDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "4019b545-6172-493e-b460-3fbe14bc2a8a",
+        "name": "Tweede kerstdag",
+        "type": "SecondChristmasDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "b8951585-334c-4794-ae82-a10b1cd763f0",
+        "name": "Eerste paasdag",
+        "type": "FirstEasterDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      },
+      {
+        "id": "fa3ad4d7-b542-428d-a880-5f8e73e90922",
+        "name": "Koningsdag",
+        "type": "KingsDay",
+        "frequency": {
+          "value": "Yearly",
+          "otherValue": null
+        },
+        "description": null,
+        "hasValueCalculation": false,
+        "valueCalculation": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ]
+  },
+  "pensionData": {
+    "id": "edfa2d90-c3f9-43bd-8afe-006b8e61462c",
+    "hasPension": true,
+    "hasAdditionalPensionArrangements": false,
+    "items": [
+      {
+        "id": "ea62266f-b00c-4f7b-aa06-c2b5973f27dd",
+        "amount": 15.9,
+        "amountType": {
+          "value": "Percentage",
+          "otherValue": null
+        },
+        "intervalAmount": 1,
+        "interval": "Yearly",
+        "hasFranchise": true,
+        "franchise": "18512,00 ",
+        "description": "Franchise is  \u20ac 18.512,00 per jaar",
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": [],
+        "pensionableEarnings": [
+          {
+            "title": "Toeslagen",
+            "code": "CAOAllowances"
+          },
+          {
+            "title": "Vakantiebijslag",
+            "code": "CAOHolidayAllowance"
+          },
+          {
+            "title": "Periodeloon in de schaal",
+            "code": "CAOWageTable"
+          }
+        ]
+      }
+    ],
+    "arrangementItems": []
+  },
+  "sustainableEmployability": {
+    "id": "c5adaddc-daa8-4a4e-be95-069ea5cc85a0",
+    "hasArrangements": true,
+    "hasMandatoryEducation": false,
+    "sustainableEmployabilityArrangements": [
+      {
+        "id": "41487f4a-7915-493b-8e37-6bf55044f93b",
+        "amount": 2500,
+        "amountType": {
+          "value": "Amount",
+          "otherValue": null
+        },
+        "basedOn": "Fixed",
+        "type": {
+          "value": "TrainingCourses",
+          "otherValue": null
+        },
+        "intervalAmount": 1,
+        "interval": "Yearly",
+        "isPartOfIndividualChoiceBudget": false,
+        "isPayedOutIfUnused": false,
+        "conditions": null,
+        "isProportional": false,
+        "proportionalBasedOn": {
+          "value": null
+        },
+        "proportionalDescription": null,
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ],
+    "mandatoryEducation": []
+  },
+  "employmentConditions": {
+    "hasEmploymentConditions": true,
+    "items": [
+      {
+        "name": "Inhuur\/uitzendkrachten",
+        "type": "HiringTemporaryWorkers",
+        "typeOther": null,
+        "amount": 0.2,
+        "basedOn": "Fixed",
+        "intervalAmount": 1,
+        "interval": "Monthly",
+        "description": "Sociaal fonds alleen bij fase A",
+        "appliesToAllFunctions": true,
+        "dependencyFunctions": []
+      }
+    ]
+  }
+}

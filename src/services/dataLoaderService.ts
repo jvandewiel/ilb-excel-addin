@@ -492,6 +492,7 @@ export interface TravelExpenseComponent {
  */
 export class DataLoaderService {
   private remunerationData: RemunerationData[] = [];
+  private referenceRenumeration: RemunerationData | null = null;
   private isLoaded = false;
 
   /**
@@ -503,8 +504,8 @@ export class DataLoaderService {
     }
 
     try {
+      // Load eported remuneration data from local JSON file
       console.log("Loading remuneration data from JSON file...");
-
       const response = await fetch("./assets/renumerations-export.json");
 
       if (!response.ok) {
@@ -512,6 +513,16 @@ export class DataLoaderService {
       }
 
       this.remunerationData = await response.json();
+      console.log("Remunerations loaded");
+      // Load reference remuneration data
+      const referenceResponse = await fetch("./assets/reference-renumeration.json");
+
+      if (!referenceResponse.ok) {
+        throw new Error(`Failed to load reference data: ${referenceResponse.status} ${referenceResponse.statusText}`);
+      }
+
+      this.referenceRenumeration = await referenceResponse.json();
+      console.log("Reference remuneration data loaded");
       this.isLoaded = true;
 
       console.log(`Loaded ${this.remunerationData.length} remuneration records`);
@@ -564,6 +575,25 @@ export class DataLoaderService {
 
     return partnerData;
   }
+
+
+  /**
+   * Get reference remuneration data
+   */
+  getReferenceRemuneration(): RemunerationData {
+    if (!this.isLoaded) {
+      console.warn("Data not loaded yet. Call loadData() first.");
+      return null;
+    }
+
+    if (!this.referenceRenumeration) {
+      console.warn("Reference remuneration data not loaded.");
+      return null;
+    }
+
+    return this.referenceRenumeration;
+  }
+
 
   /**
    * Utility function to format amount with percentage symbol if needed
@@ -1562,6 +1592,648 @@ export class DataLoaderService {
   isComponentTypePensionable(partnerId: string, componentType: string): boolean {
     const componentTypes = this.getPensionableComponentTypes(partnerId);
     return componentTypes.includes(componentType);
+  }
+
+  /**
+   * Generate Equal Pay (EP) model comparing partner data with reference data
+   * Creates side-by-side comparison for all remuneration components
+   * @param partnerId Partner ID to get data for
+   * @returns Object containing comparison data for all components
+   */
+  generateEPModel(partnerId: string): any {
+    const partnerData = this.getPartnerRemuneration(partnerId);
+    const referenceData = this.getReferenceRemuneration();
+
+    if (!partnerData || partnerData.length === 0 || !referenceData) {
+      return {
+        error: "Missing partner or reference data",
+        partnerData: partnerData?.length || 0,
+        referenceData: referenceData ? 1 : 0
+      };
+    }
+
+    const partner = partnerData[0]; // Take first record
+    const reference = referenceData;
+
+    // Helper function to generate comparison data for a component
+    const generateComparisonData = (
+      partnerComponent: any,
+      referenceComponent: any,
+      componentType: string,
+      generateFunction: (data: any, isReference: boolean) => any[][]
+    ) => {
+      const partnerRows = partnerComponent ? generateFunction(partnerComponent, false) : [];
+      const referenceRows = referenceComponent ? generateFunction(referenceComponent, true) : [];
+
+      return {
+        componentType,
+        partner: {
+          hasData: !!partnerComponent,
+          rows: partnerRows
+        },
+        reference: {
+          hasData: !!referenceComponent,
+          rows: referenceRows
+        }
+      };
+    };
+
+    const epModel = {
+      metadata: {
+        partner: {
+          businessName: partner.company?.businessName || "Unknown",
+          commerceNumber: partner.company?.commerceNumber || "N/A",
+          startDate: partner.startDate,
+          publishDate: partner.publishDate
+        },
+        reference: {
+          businessName: reference.company?.businessName || "Reference Company",
+          commerceNumber: reference.company?.commerceNumber || "REF",
+          startDate: reference.startDate,
+          publishDate: reference.publishDate
+        }
+      },
+
+      // Working Hours comparison
+      workingHours: {
+        partner: {
+          fullTimeHours: partner.workingHours?.fullTimeHours || "N/A",
+          fullTimeHoursPer: partner.workingHours?.fullTimeHoursPer || "N/A",
+          comments: partner.workingHours?.workingHoursComments || "N/A"
+        },
+        reference: {
+          fullTimeHours: reference.workingHours?.fullTimeHours || "N/A",
+          fullTimeHoursPer: reference.workingHours?.fullTimeHoursPer || "N/A",
+          comments: reference.workingHours?.workingHoursComments || "N/A"
+        }
+      },
+
+      // Allowances comparison
+      allowances: generateComparisonData(
+        partner.allowances,
+        reference.allowances,
+        "allowances",
+        (data, isReference) => this.generateAllowancesForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Holiday Allowances comparison
+      holidayAllowances: generateComparisonData(
+        partner.holidayAllowances,
+        reference.holidayAllowances,
+        "holidayAllowances",
+        (data, isReference) => this.generateHolidayAllowancesForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Pension Data comparison
+      pensionData: generateComparisonData(
+        partner.pensionData,
+        reference.pensionData,
+        "pensionData",
+        (data, isReference) => this.generatePensionDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Leave comparison
+      leave: generateComparisonData(
+        partner.leave,
+        reference.leave,
+        "leave",
+        (data, isReference) => this.generateLeaveDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Sick Pay comparison
+      sickPay: generateComparisonData(
+        partner.sickPay,
+        reference.sickPay,
+        "sickPay",
+        (data, isReference) => this.generateSickPayDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Individual Choice Budget comparison
+      individualChoiceBudget: generateComparisonData(
+        partner.individualChoiceBudget,
+        reference.individualChoiceBudget,
+        "individualChoiceBudget",
+        (data, isReference) => this.generateIndividualChoiceBudgetForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Reimbursements comparison
+      reimbursementsData: generateComparisonData(
+        partner.reimbursementsData,
+        reference.reimbursementsData,
+        "reimbursementsData",
+        (data, isReference) => this.generateReimbursementsDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Payments comparison
+      paymentsData: generateComparisonData(
+        partner.paymentsData,
+        reference.paymentsData,
+        "paymentsData",
+        (data, isReference) => this.generatePaymentsDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Wage Increments comparison
+      wageIncrements: generateComparisonData(
+        partner.wageIncrements,
+        reference.wageIncrements,
+        "wageIncrements",
+        (data, isReference) => this.generateWageIncrementsDataForComparison(data, isReference ? "REF" : partnerId)
+      ),
+
+      // Travel Expenses comparison
+      travelExpensesData: generateComparisonData(
+        partner.travelExpensesData,
+        reference.travelExpensesData,
+        "travelExpensesData",
+        (data, isReference) => this.generateTravelExpensesDataForComparison(data, isReference ? "REF" : partnerId)
+      )
+    };
+
+    return epModel;
+  }
+
+  // Helper functions for generating comparison data (reusing existing logic)
+
+  private generateAllowancesForComparison(allowancesContainer: AllowancesContainer, partnerId: string): any[][] {
+    if (!allowancesContainer || !allowancesContainer.hasAllowances || !allowancesContainer.allowances) {
+      return [["No allowances data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const pensionableComponents = partnerId === "REF" ? [] : this.getPensionableComponents(partnerId);
+    const isAllowancesPensionable = pensionableComponents.some(earning => earning.code === "CAOAllowances");
+
+    allowancesContainer.allowances.forEach((allowance) => {
+      const allowanceName = allowance.name || allowance.typeTitle || "Unnamed Allowance";
+
+      if (allowance.allowanceComponents && allowance.allowanceComponents.length > 0) {
+        allowance.allowanceComponents.forEach((component) => {
+          const amountDisplay = this.formatAmountDisplay(component.amount, component.amountType);
+
+          result.push([
+            allowanceName,
+            amountDisplay,
+            component.amountType?.value || "N/A",
+            component.basedOn || "N/A",
+            component.interval || "N/A",
+            "",
+            partnerId === "REF" ? "" : (isAllowancesPensionable ? "true" : ""),
+            component.conditions || "N/A",
+            component.description || "N/A",
+          ]);
+        });
+      } else {
+        result.push([
+          allowanceName,
+          "N/A",
+          "N/A",
+          "N/A",
+          "N/A",
+          "",
+          partnerId === "REF" ? "" : (isAllowancesPensionable ? "true" : ""),
+          allowance.conditions || "N/A",
+          "No components available",
+        ]);
+      }
+    });
+
+    return result;
+  }
+
+  private generateHolidayAllowancesForComparison(holidayAllowances: HolidayAllowance[], partnerId: string): any[][] {
+    if (!holidayAllowances || holidayAllowances.length === 0) {
+      return [["No holiday allowances data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const pensionableComponents = partnerId === "REF" ? [] : this.getPensionableComponents(partnerId);
+    const isHolidayAllowancePensionable = pensionableComponents.some(earning => earning.code === "CAOHolidayAllowance");
+
+    holidayAllowances.forEach((holidayAllowance) => {
+      const amountDisplay = this.formatAmountDisplay(holidayAllowance.amount, holidayAllowance.amountType);
+
+      result.push([
+        "Holiday Allowance",
+        amountDisplay,
+        holidayAllowance.amountType?.value || "N/A",
+        holidayAllowance.interval || "N/A",
+        holidayAllowance.basedOn || "N/A",
+        (holidayAllowance as any).isPartOfIndividualChoiceBudget ? "true" : "",
+        partnerId === "REF" ? "" : (isHolidayAllowancePensionable ? "true" : ""),
+        "N/A",
+        (holidayAllowance as any).description || "N/A",
+      ]);
+    });
+
+    return result;
+  }
+
+  private generatePensionDataForComparison(pensionData: PensionData, partnerId: string): any[][] {
+    if (!pensionData || !pensionData.hasPension || !pensionData.items) {
+      return [["No pension data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+
+    pensionData.items.forEach((item) => {
+      const amountDisplay = this.formatAmountDisplay(item.amount, item.amountType);
+      const pensionableItems = item.pensionableEarnings && item.pensionableEarnings.length > 0
+        ? item.pensionableEarnings.map(pe => pe.title).join(", ")
+        : "N/A";
+
+      result.push([
+        "Pension",
+        amountDisplay,
+        item.amountType?.value || "N/A",
+        pensionableItems || "N/A",
+        item.interval || "N/A",
+        "",
+        "",
+        "N/A",
+        (item as any).description || "N/A",
+      ]);
+    });
+
+    return result;
+  }
+
+  private generateLeaveDataForComparison(leave: LeaveData, partnerId: string): any[][] {
+    if (!leave) {
+      return [["No leave data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const pensionableComponents = partnerId === "REF" ? [] : this.getPensionableComponents(partnerId);
+    const isLeavePensionable = pensionableComponents.some(earning => earning.code === "CAOHoliday");
+
+    const processLeaveComponents = (components: LeaveComponent[], typeName: string) => {
+      if (components) {
+        components.forEach((component) => {
+          const amountDisplay = this.formatAmountDisplay(component.amount, component.amountType);
+
+          result.push([
+            typeName,
+            amountDisplay,
+            component.amountType?.value || "N/A",
+            component.interval || "N/A",
+            "",
+            (component as any).isPartOfIndividualChoiceBudget ? "true" : "",
+            partnerId === "REF" ? "" : (isLeavePensionable ? "true" : ""),
+            component.conditions || "N/A",
+            component.description || "N/A",
+          ]);
+        });
+      }
+    };
+
+    if (leave.hasWorkingHoursReduction) processLeaveComponents(leave.workingHoursReductions, "Working Hours Reduction");
+    if (leave.hasVacationDays) processLeaveComponents(leave.vacationDays, "Vacation Days");
+    if (leave.hasSpecialLeave) processLeaveComponents(leave.specialLeave, "Special Leave");
+    if (leave.hasAdditionalWAZO) processLeaveComponents(leave.additionalWAZO, "Additional WAZO");
+    if (leave.hasMandatoryLeave) processLeaveComponents(leave.mandatoryLeave, "Mandatory Leave");
+
+    if (result.length === 0) {
+      result.push(["No leave components available", "", "", "", "", "", "", "", ""]);
+    }
+
+    return result;
+  }
+
+  private generateSickPayDataForComparison(sickPay: SickPayData, partnerId: string): any[][] {
+    if (!sickPay || !sickPay.sickPayAmounts || sickPay.sickPayAmounts.length === 0) {
+      return [["No sick pay data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+
+    sickPay.sickPayAmounts.forEach((sickPayAmount) => {
+      const amountDisplay = this.formatAmountDisplay(sickPayAmount.amount, sickPayAmount.amountType);
+
+      result.push([
+        `Sick Pay (${sickPayAmount.sickPayYear?.value || "Unknown Year"})`,
+        amountDisplay,
+        sickPayAmount.amountType?.value || "N/A",
+        sickPayAmount.basedOn || "N/A",
+        sickPayAmount.interval || "N/A",
+        "",
+        "",
+        "N/A",
+        "N/A",
+      ]);
+    });
+
+    return result;
+  }
+
+  private generateIndividualChoiceBudgetForComparison(budget: IndividualChoiceBudget, partnerId: string): any[][] {
+    if (!budget || !budget.hasIndividualChoiceBudget) {
+      return [["No individual choice budget data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const amountDisplay = this.formatAmountDisplay(budget.amount, budget.amountType);
+
+    result.push([
+      "Individual Choice Budget",
+      amountDisplay,
+      budget.amountType?.value || "N/A",
+      budget.basedOn || "N/A",
+      budget.interval || "N/A",
+      "true",
+      "",
+      "N/A",
+      "Main budget allocation",
+    ]);
+
+    if (budget.items && budget.items.length > 0) {
+      budget.items.forEach((item) => {
+        const itemAmountDisplay = this.formatAmountDisplay(item.amount, item.amountType);
+        const componentName = item.name === "Other" && item.typeOther ? item.typeOther : item.name || "Unnamed Component";
+
+        result.push([
+          componentName,
+          itemAmountDisplay,
+          item.amountType?.value || "N/A",
+          item.basedOn || "N/A",
+          item.interval || "N/A",
+          item.isPartOfIndividualChoiceBudget ? "true" : "",
+          "",
+          "N/A",
+          item.description || "N/A",
+        ]);
+      });
+    }
+
+    return result;
+  }
+
+  private generateReimbursementsDataForComparison(reimbursements: ReimbursementsData, partnerId: string): any[][] {
+    if (!reimbursements || !reimbursements.hasReimbursements || !reimbursements.reimbursements) {
+      return [["No reimbursements data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+
+    reimbursements.reimbursements.forEach((reimbursement) => {
+      const amountDisplay = this.formatAmountDisplay(reimbursement.amount, reimbursement.amountType);
+
+      result.push([
+        reimbursement.name || "Unnamed Reimbursement",
+        amountDisplay,
+        reimbursement.amountType?.value || "N/A",
+        reimbursement.basedOn || "N/A",
+        reimbursement.interval || "N/A",
+        "",
+        "",
+        reimbursement.conditions || "N/A",
+        reimbursement.description || "N/A",
+      ]);
+    });
+
+    return result;
+  }
+
+  private generatePaymentsDataForComparison(payments: PaymentsData, partnerId: string): any[][] {
+    if (!payments) {
+      return [["No payments data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const pensionableComponents = partnerId === "REF" ? [] : this.getPensionableComponents(partnerId);
+    const isFixedPaymentsPensionable = pensionableComponents.some(earning => earning.code === "CAOFixedPayment");
+    const isOneTimePaymentsPensionable = pensionableComponents.some(earning => earning.code === "CAOOneTimePayment");
+    const isVariablePaymentsPensionable = pensionableComponents.some(earning => earning.code === "CAOVariablePayment");
+
+    // Process fixed payments
+    if (payments.hasFixedPayments && payments.fixedPayments) {
+      payments.fixedPayments.forEach((payment) => {
+        const amountDisplay = this.formatAmountDisplay(payment.amount, payment.amountType);
+        const basedOnText = payment.basedOn === "Other" && payment.basedOnOther ? payment.basedOnOther : payment.basedOn || "N/A";
+
+        result.push([
+          "Fixed Payment",
+          amountDisplay,
+          payment.amountType?.value || "N/A",
+          basedOnText,
+          payment.interval || "N/A",
+          payment.isPartOfIndividualChoiceBudget ? "true" : "",
+          partnerId === "REF" ? "" : (isFixedPaymentsPensionable ? "true" : ""),
+          payment.date ? `Payment date: ${payment.date}` : "N/A",
+          payment.description || "N/A",
+        ]);
+      });
+    }
+
+    // Process one-time payments
+    if (payments.hasOneTimePayments && payments.oneTimePayments) {
+      payments.oneTimePayments.forEach((payment) => {
+        const amountDisplay = this.formatAmountDisplay(payment.amount, payment.amountType);
+        const basedOnText = payment.basedOn === "Other" && payment.basedOnOther ? payment.basedOnOther : payment.basedOn || "N/A";
+
+        result.push([
+          "One-Time Payment",
+          amountDisplay,
+          payment.amountType?.value || "N/A",
+          basedOnText,
+          payment.interval || "N/A",
+          payment.isPartOfIndividualChoiceBudget ? "true" : "",
+          partnerId === "REF" ? "" : (isOneTimePaymentsPensionable ? "true" : ""),
+          payment.date ? `Payment date: ${payment.date}` : "N/A",
+          payment.description || "N/A",
+        ]);
+      });
+    }
+
+    // Process variable payments
+    if (payments.hasVariablePayments && payments.variablePayments) {
+      payments.variablePayments.forEach((payment) => {
+        let amountDisplay = this.formatAmountDisplay(payment.amount, payment.amountType);
+        
+        if (payment.hasMinMaxAmount && (payment.minAmount !== null || payment.maxAmount !== null)) {
+          const minText = payment.minAmount !== null ? `Min: ${payment.minAmount}` : "";
+          const maxText = payment.maxAmount !== null ? `Max: ${payment.maxAmount}` : "";
+          const rangeText = [minText, maxText].filter(Boolean).join(", ");
+          if (rangeText) {
+            amountDisplay += ` (${rangeText})`;
+          }
+        }
+
+        const basedOnText = payment.basedOn === "Other" && payment.basedOnOther ? payment.basedOnOther : payment.basedOn || "N/A";
+        const paymentName = payment.name ? `Variable Payment (${payment.name})` : "Variable Payment";
+
+        result.push([
+          paymentName,
+          amountDisplay,
+          payment.amountType?.value || "N/A",
+          basedOnText,
+          payment.interval || "N/A",
+          "",
+          partnerId === "REF" ? "" : (isVariablePaymentsPensionable ? "true" : ""),
+          payment.date ? `Payment date: ${payment.date}` : "N/A",
+          payment.description || "N/A",
+        ]);
+      });
+    }
+
+    // Process anniversary payments
+    if (payments.hasAnniversaryPayments && payments.anniversaryPayments) {
+      payments.anniversaryPayments.forEach((payment) => {
+        const amountDisplay = this.formatAmountDisplay(payment.amount, payment.amountType);
+        const paymentName = `Anniversary Payment (${payment.amountOfYears} years)`;
+        const basedOnText = payment.basedOn === "Other" && payment.basedOnOther ? payment.basedOnOther : payment.basedOn || "N/A";
+        const conditionsText = payment.dateOrCondition === "Other" && payment.dateOrConditionOther ? payment.dateOrConditionOther : payment.dateOrCondition || "N/A";
+
+        result.push([
+          paymentName,
+          amountDisplay,
+          payment.amountType?.value || "N/A",
+          basedOnText,
+          payment.interval || "N/A",
+          "",
+          "",
+          conditionsText,
+          payment.description || "N/A",
+        ]);
+      });
+    }
+
+    if (result.length === 0) {
+      result.push(["No payments available", "", "", "", "", "", "", "", ""]);
+    }
+
+    return result;
+  }
+
+  private generateWageIncrementsDataForComparison(wageIncrements: WageIncrementsData, partnerId: string): any[][] {
+    if (!wageIncrements || !wageIncrements.hasWageIncrements) {
+      return [["No wage increments data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+
+    // Process regular increment data
+    if (wageIncrements.incrementData && wageIncrements.incrementData.length > 0) {
+      wageIncrements.incrementData.forEach((increment) => {
+        const amountDisplay = this.formatAmountDisplay(increment.percentage, { 
+          value: increment.incrementType === "%" ? "Percentage" : "Amount", 
+          otherValue: null 
+        });
+
+        result.push([
+          "Regular Wage Increment",
+          amountDisplay,
+          increment.incrementType === "%" ? "Percentage" : "Amount",
+          "Salary",
+          `Effective ${increment.date}`,
+          "",
+          "",
+          increment.appliesToAllFunctions ? "Applies to all functions" : "Function-specific",
+          increment.explanation || `Wage increment of ${increment.percentage}${increment.incrementType} effective ${increment.date}`,
+        ]);
+      });
+    }
+
+    // Process retroactive increment data
+    if (wageIncrements.retroactiveIncrementData && wageIncrements.retroactiveIncrementData.length > 0) {
+      wageIncrements.retroactiveIncrementData.forEach((increment) => {
+        const amountDisplay = this.formatAmountDisplay(increment.percentage, { 
+          value: increment.incrementType === "%" ? "Percentage" : "Amount", 
+          otherValue: null 
+        });
+
+        result.push([
+          "Retroactive Wage Increment",
+          amountDisplay,
+          increment.incrementType === "%" ? "Percentage" : "Amount",
+          "Salary",
+          `Effective ${increment.date}`,
+          "",
+          "",
+          increment.appliesToAllFunctions ? "Applies to all functions" : "Function-specific",
+          increment.explanation || `Retroactive wage increment of ${increment.percentage}${increment.incrementType} effective ${increment.date}`,
+        ]);
+      });
+    }
+
+    // Process periodical data
+    if (wageIncrements.periodicalData && wageIncrements.periodicalData.length > 0) {
+      wageIncrements.periodicalData.forEach((periodical) => {
+        result.push([
+          "Periodical Increment",
+          "N/A",
+          "Schedule-based",
+          "Performance & Experience",
+          `${periodical.experiencePeriodAmount} ${periodical.experiencePeriodAmountType}`,
+          "",
+          "",
+          `${periodical.eligibleType} - ${periodical.performanceMoment}`,
+          periodical.periodicals || "Performance-based salary progression",
+        ]);
+      });
+    }
+
+    if (result.length === 0) {
+      result.push(["No wage increment components available", "", "", "", "", "", "", "", ""]);
+    }
+
+    return result;
+  }
+
+  private generateTravelExpensesDataForComparison(travelExpenses: TravelExpensesData, partnerId: string): any[][] {
+    if (!travelExpenses || !travelExpenses.hasTravelExpenses || !travelExpenses.travelExpenses) {
+      return [["No travel expenses data available", "", "", "", "", "", "", "", ""]];
+    }
+
+    const result: any[][] = [];
+    const pensionableComponents = partnerId === "REF" ? [] : this.getPensionableComponents(partnerId);
+    const isTravelExpensesPensionable = pensionableComponents.some(earning => 
+      earning.code === "CAOTravelExpenses" || earning.code === "CAOTravelTime"
+    );
+
+    travelExpenses.travelExpenses.forEach((travelExpense) => {
+      const compensationType = travelExpense.compensationType?.value || "Unknown";
+
+      if (travelExpense.components && travelExpense.components.length > 0) {
+        travelExpense.components.forEach((component) => {
+          const amountDisplay = this.formatAmountDisplay(component.amount, component.amountType);
+
+          let componentName = "Travel Expense";
+          if (component.amountType?.value === "Hours") {
+            componentName = "Travel Time";
+          } else if (compensationType === "Money") {
+            componentName = "Travel Allowance";
+          } else if (compensationType === "Both") {
+            componentName = component.amountType?.value === "Hours" ? "Travel Time" : "Travel Allowance";
+          }
+
+          result.push([
+            componentName,
+            amountDisplay,
+            component.amountType?.value || "N/A",
+            compensationType || "N/A",
+            component.interval || "N/A",
+            "",
+            partnerId === "REF" ? "" : (isTravelExpensesPensionable ? "true" : ""),
+            component.conditions || "N/A",
+            component.description || "N/A",
+          ]);
+        });
+      } else {
+        result.push([
+          "Travel Expense",
+          "N/A",
+          "N/A",
+          compensationType || "N/A",
+          "N/A",
+          "",
+          partnerId === "REF" ? "" : (isTravelExpensesPensionable ? "true" : ""),
+          "N/A",
+          `Travel expense with ${compensationType} compensation`,
+        ]);
+      }
+    });
+
+    return result;
   }
 }
 
