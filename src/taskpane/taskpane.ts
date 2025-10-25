@@ -20,7 +20,7 @@ Office.onReady(() => {
   document.getElementById("partner-select").onchange = onPartnerSelect;
   document.getElementById("load-remuneration").onclick = loadRemuneration;
   document.getElementById("generate-ep-sheet").onclick = generateEP;
-  
+
   // Load partners on startup
   loadPartners();
 });
@@ -29,35 +29,35 @@ Office.onReady(() => {
  * Load partners and populate the dropdown
  */
 export async function loadPartners() {
-  console.log('Starting to load partners...');
+  console.log("Starting to load partners...");
   updateStatus("Loading partners from JSON data...", "loading");
-  
+
   try {
     // Load the data first
     await dataLoader.loadData();
-    
+
     // Get partners from the loaded data
     partners = dataLoader.getPartners();
-    console.log('Partners loaded:', partners);
-    
+    console.log("Partners loaded:", partners);
+
     const select = document.getElementById("partner-select") as HTMLSelectElement;
     if (select) {
       // Clear existing options
       select.innerHTML = '<option value="">Select a partner...</option>';
-      
+
       // Add partner options
-      partners.forEach(partner => {
-        console.log('Adding partner to dropdown:', partner);
-        const option = document.createElement('option');
+      partners.forEach((partner) => {
+        console.log("Adding partner to dropdown:", partner);
+        const option = document.createElement("option");
         option.value = partner.id;
         option.textContent = partner.businessName;
         select.appendChild(option);
       });
-      
+
       // Enable the dropdown
       select.disabled = false;
     }
-    
+
     updateStatus(`Loaded ${partners.length} partners`, "success");
   } catch (error) {
     console.error("Error loading partners:", error);
@@ -72,20 +72,23 @@ export function onPartnerSelect() {
   const select = document.getElementById("partner-select") as HTMLSelectElement;
   if (select) {
     selectedPartnerId = select.value;
-    
+
     const loadButton = document.getElementById("load-remuneration") as HTMLElement;
-    
+
     if (loadButton) {
       if (selectedPartnerId) {
-        loadButton.classList.remove('disabled');
+        loadButton.classList.remove("disabled");
       } else {
-        loadButton.classList.add('disabled');
+        loadButton.classList.add("disabled");
       }
     }
-    
+
     if (selectedPartnerId) {
-      const selectedPartner = partners.find(p => p.id === selectedPartnerId);
-      updateStatus(`Selected partner: ${selectedPartner?.businessName || selectedPartnerId}`, "success");
+      const selectedPartner = partners.find((p) => p.id === selectedPartnerId);
+      updateStatus(
+        `Selected partner: ${selectedPartner?.businessName || selectedPartnerId}`,
+        "success"
+      );
     } else {
       updateStatus("Select a partner to continue", "loading");
     }
@@ -97,22 +100,26 @@ export function onPartnerSelect() {
  */
 export async function loadRemuneration() {
   const loadButton = document.getElementById("load-remuneration") as HTMLElement;
-  if (loadButton && loadButton.classList.contains('disabled')) {
+  if (loadButton && loadButton.classList.contains("disabled")) {
     return; // Button is disabled, do nothing
   }
-  
+
   if (!selectedPartnerId) {
     updateStatus("Please select a partner first", "error");
     return;
   }
-  
-  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
-  updateStatus(`Loading remuneration and allowances for ${selectedPartner?.businessName}...`, "loading");
-  
+
+  const selectedPartner = partners.find((p) => p.id === selectedPartnerId);
+  updateStatus(
+    `Loading remuneration and allowances for ${selectedPartner?.businessName}...`,
+    "loading"
+  );
+
   try {
     // Get remuneration data for the partner
-    const remunerationData: RemunerationData[] = dataLoader.getPartnerRemuneration(selectedPartnerId);
-    
+    const remunerationData: RemunerationData[] =
+      dataLoader.getPartnerRemuneration(selectedPartnerId);
+
     if (!remunerationData || remunerationData.length === 0) {
       updateStatus("No remuneration available for this partner", "error");
       return;
@@ -120,49 +127,62 @@ export async function loadRemuneration() {
 
     // Load data into Excel ILB sheet (includes allowances)
     await Excel.run(async (context) => {
-      await loadDataToILBSheet(context, selectedPartnerId, selectedPartner?.businessName || 'Unknown');
-      updateStatus(`Remuneration and allowances loaded successfully for ${selectedPartner?.businessName} (${remunerationData.length} records)`, "success");
+      await loadDataToILBSheet(
+        context,
+        selectedPartnerId,
+        selectedPartner?.businessName || "Unknown"
+      );
+      updateStatus(
+        `Remuneration and allowances loaded successfully for ${selectedPartner?.businessName} (${remunerationData.length} records)`,
+        "success"
+      );
     });
-    
   } catch (error) {
     console.error("Error loading remuneration:", error);
     updateStatus(`Error loading remuneration: ${error.message}`, "error");
   }
 
-  // Enable EP generation button 
+  // Enable EP generation button
   const generateEPButton = document.getElementById("generate-ep-sheet") as HTMLElement;
   if (generateEPButton) {
-    generateEPButton.classList.remove('disabled');
+    generateEPButton.classList.remove("disabled");
   }
 }
 
- /**
-  * Trigger Generate EP sheet for the selected partner
-  */
+/**
+ * Trigger Generate EP sheet for the selected partner
+ */
 export async function generateEP() {
   if (!selectedPartnerId) {
     updateStatus("Please select a partner first", "error");
     return;
   }
 
-  const selectedPartner = partners.find(p => p.id === selectedPartnerId);
+  const selectedPartner = partners.find((p) => p.id === selectedPartnerId);
   updateStatus(`Generating equal pay sheet for ${selectedPartner?.businessName}...`, "loading");
 
   try {
     await Excel.run(async (context) => {
       // Call function to generate EP sheet
-      await generateEPSheet(context, selectedPartnerId, selectedPartner?.businessName || 'Unknown');
-      updateStatus(`Equal pay sheet generated successfully for ${selectedPartner?.businessName}`, "success");
+      await generateEPSheet(context, selectedPartnerId, selectedPartner?.businessName || "Unknown");
+      updateStatus(
+        `Equal pay sheet generated successfully for ${selectedPartner?.businessName}`,
+        "success"
+      );
     });
   } catch (error) {
     console.error("Error generating equal pay sheet:", error);
     updateStatus(`Error generating equal pay sheet: ${error.message}`, "error");
   }
 }
-  
-async function generateEPSheet(context: Excel.RequestContext, partnerId: string, partnerName: string) {
+
+async function generateEPSheet(
+  context: Excel.RequestContext,
+  partnerId: string,
+  partnerName: string
+) {
   console.log(`Preparing to generate EP sheet for partner ID: ${partnerId}`);
-  
+
   // Get or create EP worksheet and clear if exists
   let worksheet: Excel.Worksheet;
   try {
@@ -170,7 +190,6 @@ async function generateEPSheet(context: Excel.RequestContext, partnerId: string,
     await context.sync();
     console.log("EP worksheet found.");
     worksheet.getUsedRange().clear();
-    
   } catch (error) {
     console.log("EP worksheet not found, creating a new one.");
     worksheet = context.workbook.worksheets.add("EP");
@@ -180,11 +199,14 @@ async function generateEPSheet(context: Excel.RequestContext, partnerId: string,
   worksheet.activate();
   await context.sync();
 
+  // Clear existing named ranges first
+  await clearExistingNamedRanges(context);
+
   console.log(`Generating EP data for partner: ${partnerName}`);
-  
+
   // Load partner data and reference data, display side-by-side in EP sheet
   const epModel = dataLoader.generateEPModel(partnerId);
-  
+
   if (epModel.error) {
     console.error("Error generating EP model:", epModel.error);
     const errorRange = worksheet.getRange("A1:B1");
@@ -200,49 +222,124 @@ async function generateEPSheet(context: Excel.RequestContext, partnerId: string,
   const metadataComparison = [
     ["Equal Pay Analysis", "", "", "Partner Data", "", "", "Reference Data", "", ""],
     ["", "", "", "", "", "", "", "", ""],
-    ["Partner Name", "", "", epModel.metadata.partner.businessName, "", "", epModel.metadata.reference.businessName, "", ""],
-    ["Commerce Number", "", "", epModel.metadata.partner.commerceNumber, "", "", epModel.metadata.reference.commerceNumber, "", ""],
-    ["Start Date", "", "", epModel.metadata.partner.startDate || "N/A", "", "", epModel.metadata.reference.startDate || "N/A", "", ""],
-    ["Publish Date", "", "", epModel.metadata.partner.publishDate || "N/A", "", "", epModel.metadata.reference.publishDate || "N/A", "", ""],
+    [
+      "Partner Name",
+      "",
+      "",
+      epModel.metadata.partner.businessName,
+      "",
+      "",
+      epModel.metadata.reference.businessName,
+      "",
+      "",
+    ],
+    [
+      "Commerce Number",
+      "",
+      "",
+      epModel.metadata.partner.commerceNumber,
+      "",
+      "",
+      epModel.metadata.reference.commerceNumber,
+      "",
+      "",
+    ],
+    [
+      "Start Date",
+      "",
+      "",
+      epModel.metadata.partner.startDate || "N/A",
+      "",
+      "",
+      epModel.metadata.reference.startDate || "N/A",
+      "",
+      "",
+    ],
+    [
+      "Publish Date",
+      "",
+      "",
+      epModel.metadata.partner.publishDate || "N/A",
+      "",
+      "",
+      epModel.metadata.reference.publishDate || "N/A",
+      "",
+      "",
+    ],
     ["", "", "", "", "", "", "", "", ""],
     ["Working Hours", "", "", "", "", "", "", "", ""],
-    ["Full Time Hours", "", "", `${epModel.workingHours.partner.fullTimeHours} ${epModel.workingHours.partner.fullTimeHoursPer}`, "", "", `${epModel.workingHours.reference.fullTimeHours} ${epModel.workingHours.reference.fullTimeHoursPer}`, "", ""],
-    ["Comments", "", "", epModel.workingHours.partner.comments, "", "", epModel.workingHours.reference.comments, "", ""],
+    [
+      "Full Time Hours",
+      "",
+      "",
+      epModel.workingHours.partner.fullTimeHours,
+      epModel.workingHours.partner.fullTimeHoursPer,
+      "",
+      epModel.workingHours.reference.fullTimeHours,
+      epModel.workingHours.reference.fullTimeHoursPer,
+      "",
+    ],
+    [
+      "Comments",
+      "",
+      "",
+      epModel.workingHours.partner.comments,
+      "",
+      "",
+      epModel.workingHours.reference.comments,
+      "",
+      "",
+    ],
     ["", "", "", "", "", "", "", "", ""],
-    ["Remuneration Components:", "", "", "", "", "", "", "", ""],
   ];
 
   console.log(metadataComparison);
 
-  const metadataRange = worksheet.getRange("A1:I12");
+  const metadataRange = worksheet.getRange("A1:I11");
   metadataRange.values = metadataComparison;
-  
+
   // Format
   worksheet.getRange("A1:I1").format.font.bold = true;
   await context.sync();
 
   console.log("Metadata comparison added to EP sheet.");
 
-  let currentDataRow = 13; // Start after metadata
+  let currentDataRow = 12; // Start after metadata
 
   // Component mapping for display order
-  const componentOrder = [
-    //{ key: 'allowances', title: 'Allowances' },
-    { key: 'holidayAllowances', title: 'Holiday Allowances' },
-    { key: 'leave', title: 'Leave' },
-    { key: 'pensionData', title: 'Pension' },
-    { key: 'sickPay', title: 'Sick Pay' },
-    { key: 'individualChoiceBudget', title: 'Individual Choice Budget' },
-    { key: 'reimbursementsData', title: 'Reimbursements' },
-    { key: 'paymentsData', title: 'Payments' },
-    { key: 'wageIncrements', title: 'Wage Increments' },
-    { key: 'travelExpensesData', title: 'Travel Expenses' }
+  // Split in essential, non essential and conditional
+  // All components: allowances, holidayAllowances, leave, sickPay, individualChoiceBudget,
+  //                 reimbursementsData, paymentsData, wageIncrements, travelExpensesData, pensionData
+  const essentialComponentOrder = [
+    { key: "holidayAllowances", title: "Holiday Allowances" },
+    { key: "leave", title: "Leave" },
+    { key: "individualChoiceBudget", title: "Individual Choice Budget" },
+    { key: "paymentsData", title: "Payments" },
+    { key: "wageIncrements", title: "Wage Increments" },
+    { key: "travelExpensesData", title: "Travel Expenses" },
+    { key: "allowances", title: "Allowances" },
   ];
 
-  // Process each component
-  for (const component of componentOrder) {
+  const nonEssentialComponentOrder = [{ key: "pensionData", title: "Pension" }];
+
+  const conditionalComponentOrder = [
+    { key: "sickPay", title: "Sick Pay" },
+    { key: "reimbursementsData", title: "Reimbursements" },
+  ];
+
+  // Essential headline
+  const essentialHeadlineRange = worksheet.getRangeByIndexes(currentDataRow, 0, 1, 9);
+  essentialHeadlineRange.values = [
+    ["Essential Remuneration Components", "", "", "", "", "", "", "", ""],
+  ];
+  essentialHeadlineRange.format.font.bold = true;
+  essentialHeadlineRange.format.fill.color = "#ebaf56";
+  currentDataRow++;
+
+  // Process each component group in order
+  for (const component of essentialComponentOrder) {
     const componentData = epModel[component.key];
-    
+
     if (componentData && (componentData.partner.hasData || componentData.reference.hasData)) {
       currentDataRow = await addEPComponent(
         worksheet,
@@ -253,34 +350,198 @@ async function generateEPSheet(context: Excel.RequestContext, partnerId: string,
       );
     }
   }
-  
+
+  // Non-essential headline
+  const nonEssentialHeadlineRange = worksheet.getRangeByIndexes(currentDataRow, 0, 1, 9);
+  nonEssentialHeadlineRange.values = [
+    ["Non-Essential Remuneration Components", "", "", "", "", "", "", "", ""],
+  ];
+  nonEssentialHeadlineRange.format.font.bold = true;
+  nonEssentialHeadlineRange.format.fill.color = "#ebaf56";
+  currentDataRow++;
+
+  for (const component of nonEssentialComponentOrder) {
+    const componentData = epModel[component.key];
+
+    if (componentData && (componentData.partner.hasData || componentData.reference.hasData)) {
+      currentDataRow = await addEPComponent(
+        worksheet,
+        component.title,
+        componentData.partner,
+        componentData.reference,
+        currentDataRow
+      );
+    }
+  }
+
+  // Conditional headline
+  const conditionalHeadlineRange = worksheet.getRangeByIndexes(currentDataRow, 0, 1, 9);
+  conditionalHeadlineRange.values = [
+    ["Conditional Remuneration Components", "", "", "", "", "", "", "", ""],
+  ];
+  conditionalHeadlineRange.format.font.bold = true;
+  conditionalHeadlineRange.format.fill.color = "#ebaf56";
+  currentDataRow++;
+
+  for (const component of conditionalComponentOrder) {
+    const componentData = epModel[component.key];
+
+    if (componentData && (componentData.partner.hasData || componentData.reference.hasData)) {
+      currentDataRow = await addEPComponent(
+        worksheet,
+        component.title,
+        componentData.partner,
+        componentData.reference,
+        currentDataRow
+      );
+    }
+  }
+
   // Set column widths and formatting
-  
+
   worksheet.getRange("A:A").format.columnWidth = 120;
   worksheet.getRange("B:C").format.columnWidth = 60;
-  
+
   worksheet.getRange("D:D").format.columnWidth = 120;
 
   worksheet.getRange("E:E").format.columnWidth = 120;
   worksheet.getRange("F:G").format.columnWidth = 60;
-  
-  
+
+  // Add hardcoded values and ranges - move to different function later
+  worksheet.getRange("K10:N10").values = [["Gross wage salary per month", 4500, "", 3500]];
+  worksheet.getRange("K11:N11").values = [["Gross wage salary per hour", "", "", ""]];
+  worksheet.getRange("L15:N15").values = [["Partner", "", "YER"]];
+
+  const rangeMap = new Map([
+    ["customerHoursPerWeek", "D9"],
+    ["yerHoursPerWeek", "G9"],
+    ["customerGrossWageSalaryPerMonth", "L10"],
+    ["yerGrossWageSalaryPerMonth", "N10"],
+    ["customerGrossWageSalaryPerHour", "L11"],
+    ["yerGrossWageSalaryPerHour", "N11"],
+  ]);
+
+  // Set named ranges
+  await setNamedRangesFromMap(context, rangeMap, "EP");
+
+  // Add some formulas
+  const formulas = new Map([
+    ["L11", "=customerGrossWageSalaryPerMonth / (customerHoursPerWeek * 4.35)"],
+    ["N11", "=yerGrossWageSalaryPerMonth / (yerHoursPerWeek * 4.35)"],
+    ["L16", "=customerGrossWageSalaryPerMonth * B16"],
+    ["N16", "=yerGrossWageSalaryPerMonth * F16"],
+  ]);
+
+  await setFormulasFromMap(context, formulas, "EP");
+
   await context.sync();
   console.log(`EP sheet generated successfully for ${partnerName}`);
 }
 
 /**
+ * Sets multiple named ranges in the worksheet, also clears out the existing ones
+ * @param context - The Excel request context
+ * @param namedRanges - Array of objects containing name and range address
+ * @param worksheetName - Optional worksheet name to scope the ranges to (default: current active worksheet)
+ */
+async function setNamedRangesFromMap(
+  context: Excel.RequestContext,
+  rangeMap: Map<string, string>,
+  worksheetName: string
+): Promise<void> {
+  try {
+
+    // Load and clear the worksheet-scoped named ranges
+    console.log(`Clearing existing named ranges in ${worksheetName}`);
+    const worksheet = context.workbook.worksheets.getItem(worksheetName);
+    const worksheetNamedRanges = worksheet.names;
+    worksheetNamedRanges.load("items");
+    await context.sync();
+    
+    // Delete all worksheet-scoped named ranges
+    const worksheetItemsToDelete = worksheetNamedRanges.items.slice();
+    for (const item of worksheetItemsToDelete) {
+      console.log(`Deleting worksheet-scoped named range: ${item.name}`);
+      item.delete();
+    }
+    
+    if (worksheetItemsToDelete.length > 0) {
+      await context.sync();
+      console.log(`Cleared ${worksheetItemsToDelete.length} worksheet-scoped named ranges`);
+    }
+
+    console.log(`Setting ${rangeMap.size} named ranges`);
+    const namedRanges = Array.from(rangeMap.entries()).map(([name, range]) => ({
+      name,
+      range,
+    }));
+    
+    for (const namedRange of namedRanges) {
+      console.log(`Creating named range: ${namedRange.name} -> ${namedRange.range}`);
+      let namedCell= worksheet.getRange(namedRange.range);      
+      worksheet.names.add(namedRange.name, namedCell);
+    }
+    await context.sync();
+
+    console.log(`Successfully created ${namedRanges.length} named ranges`);
+  } catch (error) {
+    console.error("Error setting named ranges:", error);
+    throw new Error(`Failed to set named ranges: ${error.message}`);
+  }
+}
+
+/**
+ * Sets multiple formulas using named ranges in different cells
+ * @param context - The Excel request context
+ * @param formulaMap - Map of cell addresses to formulas
+ * @param worksheetName - Optional worksheet name
+ */
+async function setFormulasFromMap(
+  context: Excel.RequestContext,
+  formulaMap: Map<string, string>,
+  worksheetName: string
+): Promise<void> {
+  try {
+    console.log(`Setting ${formulaMap.size} formulas with named ranges`);
+    
+    let worksheet = context.workbook.worksheets.getItem(worksheetName);
+    
+    const formulas = Array.from(formulaMap.entries()).map(([cellAddress, formula]) => ({
+      cellAddress,
+      formula,
+    }));
+    // Set all formulas
+    for (const { cellAddress, formula } of formulas) {
+      console.log(`Setting formula in ${cellAddress}: ${formula}`);
+      const cell = worksheet.getRange(cellAddress);
+      cell.formulas = [[formula]];
+    }
+    
+    await context.sync();
+    console.log(`Successfully set ${formulaMap.size} formulas`);
+    
+  } catch (error) {
+    console.error("Error setting multiple formulas:", error);
+    throw error;
+  }
+}
+
+/**
  * Load data into the ILB sheet with proper structure
  */
-async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: string, partnerName: string) {
+async function loadDataToILBSheet(
+  context: Excel.RequestContext,
+  partnerId: string,
+  partnerName: string
+) {
   console.log(`Preparing to load data into ILB sheet for partner ID: ${partnerId}`);
-  
+
   let worksheet: Excel.Worksheet;
   try {
     worksheet = context.workbook.worksheets.getItem("ILB");
     await context.sync();
     console.log("ILB worksheet found, clearing");
-    worksheet.getUsedRange().clear();    
+    worksheet.getUsedRange().clear();
   } catch (error) {
     console.log("ILB worksheet not found, creating a new one.");
     worksheet = context.workbook.worksheets.add("ILB");
@@ -291,19 +552,19 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
 
   worksheet.activate();
   await context.sync();
-  
+
   // Clear existing named ranges first
   await clearExistingNamedRanges(context);
 
   console.log(`Loading data for partner: ${partnerName} into ILB sheet`);
-  
+
   // Generate metadata (rows 1-10)
-  const metadata = dataLoader.generateMetadata(partnerId); 
-  console.log('Metadata generated:', metadata);
+  const metadata = dataLoader.generateMetadata(partnerId);
+  console.log("Metadata generated:", metadata);
 
   const metadataRange = worksheet.getRange("A1:C10"); // Dynamically set range for metadata
   metadataRange.values = metadata;
-  
+
   // Format metadata section
   metadataRange.format.font.bold = true;
   metadataRange.getColumn(0).format.fill.color = "#E3F2FD";
@@ -314,13 +575,18 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
 
   // Load components that are pensionable
   const pensionableComponents = dataLoader.getPensionableComponents(partnerId);
-  console.log('Pensionable Components:', pensionableComponents);
+  console.log("Pensionable Components:", pensionableComponents);
 
-  // Generate holiday allowances data (starting from A10)  
+  // Generate holiday allowances data (starting from A10)
   const holidayAllowancesData = dataLoader.generateHolidayAllowances(partnerId);
-  console.log('Holiday Allowances Data:', holidayAllowancesData);
+  console.log("Holiday Allowances Data:", holidayAllowancesData);
   if (holidayAllowancesData.length > 0) {
-    currentDataRow = await addComponent(worksheet, "Holiday Allowances", holidayAllowancesData, currentDataRow);
+    currentDataRow = await addComponent(
+      worksheet,
+      "Holiday Allowances",
+      holidayAllowancesData,
+      currentDataRow
+    );
   }
 
   // Generate leave data
@@ -332,7 +598,12 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
   // Generate individual choice budget data
   const individualChoiceBudgetData = dataLoader.generateIndividualChoiceBudget(partnerId);
   if (individualChoiceBudgetData.length > 0) {
-    currentDataRow = await addComponent(worksheet, "Individual Choice Budget", individualChoiceBudgetData, currentDataRow);
+    currentDataRow = await addComponent(
+      worksheet,
+      "Individual Choice Budget",
+      individualChoiceBudgetData,
+      currentDataRow
+    );
   }
 
   // Generate pension data
@@ -341,14 +612,14 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
     currentDataRow = await addComponent(worksheet, "Pension", pensionData, currentDataRow);
   }
 
-    // Generate sick pay data
+  // Generate sick pay data
   const sickPayData = dataLoader.generateSickPayData(partnerId);
   if (sickPayData.length > 0) {
     currentDataRow = await addComponent(worksheet, "Sick Pay", sickPayData, currentDataRow);
   }
-  
+
   // Generate allowances data
-  const allowancesData = dataLoader.generateAllowances(partnerId); 
+  const allowancesData = dataLoader.generateAllowances(partnerId);
   if (allowancesData.length > 0) {
     currentDataRow = await addComponent(worksheet, "Allowances", allowancesData, currentDataRow);
   }
@@ -356,13 +627,23 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
   // Generate reimbursements data
   const reimbursementsData = dataLoader.generateReimbursementsData(partnerId);
   if (reimbursementsData.length > 0) {
-    currentDataRow = await addComponent(worksheet, "Reimbursements", reimbursementsData, currentDataRow);
+    currentDataRow = await addComponent(
+      worksheet,
+      "Reimbursements",
+      reimbursementsData,
+      currentDataRow
+    );
   }
 
   // Generate travel expenses data
   const travelExpensesData = dataLoader.generateTravelExpensesData(partnerId);
   if (travelExpensesData.length > 0) {
-    currentDataRow = await addComponent(worksheet, "Travel Expenses", travelExpensesData, currentDataRow);
+    currentDataRow = await addComponent(
+      worksheet,
+      "Travel Expenses",
+      travelExpensesData,
+      currentDataRow
+    );
   }
 
   // Generate payments data (anniversary payments)
@@ -374,13 +655,18 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
   // Generate wage increments data
   const wageIncrementsData = dataLoader.generateWageIncrementsData(partnerId);
   if (wageIncrementsData.length > 0) {
-    currentDataRow = await addComponent(worksheet, "Wage Increments", wageIncrementsData, currentDataRow);
+    currentDataRow = await addComponent(
+      worksheet,
+      "Wage Increments",
+      wageIncrementsData,
+      currentDataRow
+    );
   }
-  
+
   // Set column widths and word wrap
   worksheet.getRange("A:I").format.columnWidth = 100;
   worksheet.getRange("A:I").format.wrapText = false;
-    
+
   await context.sync();
   console.log(`Data loaded successfully into ILB sheet for ${partnerName}`);
 }
@@ -391,18 +677,18 @@ async function loadDataToILBSheet(context: Excel.RequestContext, partnerId: stri
  */
 async function clearExistingNamedRanges(context: Excel.RequestContext) {
   console.log("Clearing existing named ranges...");
-  
+
   const namedItems = context.workbook.names;
   namedItems.load("items");
   await context.sync();
-  
+
   // Remove all existing named ranges
   const itemsToDelete = namedItems.items.slice(); // Create a copy to avoid modification during iteration
   for (const item of itemsToDelete) {
     console.log(`Deleting named range: ${item.name}`);
     item.delete();
   }
-  
+
   if (itemsToDelete.length > 0) {
     await context.sync();
     console.log(`Cleared ${itemsToDelete.length} existing named ranges`);
@@ -416,12 +702,12 @@ async function clearExistingNamedRanges(context: Excel.RequestContext) {
  * @param range - The Excel range to apply borders to
  * @param includeInside - Whether to include inside borders (default: true)
  */
-function setAllBorders(range: Excel.Range, includeInside: boolean = true) {  
+function setAllBorders(range: Excel.Range, includeInside: boolean = true) {
   range.format.borders.getItem("EdgeTop").style = "Continuous";
   range.format.borders.getItem("EdgeBottom").style = "Continuous";
   range.format.borders.getItem("EdgeLeft").style = "Continuous";
   range.format.borders.getItem("EdgeRight").style = "Continuous";
-  
+
   if (includeInside) {
     range.format.borders.getItem("InsideVertical").style = "Continuous";
     range.format.borders.getItem("InsideHorizontal").style = "Continuous";
@@ -437,9 +723,9 @@ function setAllBorders(range: Excel.Range, includeInside: boolean = true) {
  * @returns The next available row index after this component
  */
 async function addComponent(
-  worksheet: Excel.Worksheet, 
-  title: string, 
-  data: any[][], 
+  worksheet: Excel.Worksheet,
+  title: string,
+  data: any[][],
   startRow: number
 ): Promise<number> {
   if (!data || data.length === 0) {
@@ -447,7 +733,7 @@ async function addComponent(
   }
 
   let currentRow = startRow;
-   
+
   // Add component title - only 1 column
   const titleRange = worksheet.getRangeByIndexes(currentRow, 0, 1, 1);
   titleRange.values = [[title]];
@@ -455,22 +741,22 @@ async function addComponent(
   titleRange.format.fill.color = "#ADD8E6"; // Light blue
   setAllBorders(titleRange, false);
   currentRow++;
-  
+
   // Add data (including headers)
-  const dataEndCol = Math.max(0, Math.max(...data.map(row => row.length)) - 1);
+  const dataEndCol = Math.max(0, Math.max(...data.map((row) => row.length)) - 1);
   const dataRange = worksheet.getRangeByIndexes(currentRow, 0, data.length, dataEndCol + 1);
-  
+
   dataRange.values = data;
-  
+
   // Format all data cells with borders
   setAllBorders(dataRange);
-  
+
   // Format header row (first row of data) as bold
   if (data.length > 0) {
     const headerRange = worksheet.getRangeByIndexes(currentRow, 0, 1, dataEndCol + 1);
     headerRange.format.font.bold = true;
   }
-    
+
   return currentRow + data.length + 1; // Return next available row with spacing
 }
 
@@ -491,11 +777,11 @@ async function addEPComponent(
   startRow: number
 ): Promise<number> {
   let currentRow = startRow;
-  
+
   console.log(`Adding EP component: ${title} at row ${currentRow}`);
 
-  console.log('Partner Data:', partnerData);
-  console.log('Reference Data:', referenceData);
+  console.log("Partner Data:", partnerData);
+  console.log("Reference Data:", referenceData);
 
   // Add component title spanning all columns
   // Add component title - only 1 column
@@ -506,7 +792,6 @@ async function addEPComponent(
   setAllBorders(titleRange, false);
   currentRow++;
 
-  
   // Add section headers for Partner and Reference
   // Should make this into a function to add a data block dynamically and return used range for formatting
   // with some headers etc
@@ -515,28 +800,34 @@ async function addEPComponent(
   sectionHeaderRange.values = [["Partner Data", "", "", "", "Reference Data", "", "", "", ""]];
   sectionHeaderRange.format.font.bold = true;
   sectionHeaderRange.format.fill.color = "#E3F2FD";
-  
+
   // Merge cells for section headers
   //worksheet.getRangeByIndexes(currentRow, 3, 1, 3).merge(); // Partner Data
   //worksheet.getRangeByIndexes(currentRow, 6, 1, 3).merge(); // Reference Data
-  
+
   //setAllBorders(sectionHeaderRange, true);
   currentRow++;
-  
+
   // Determine the maximum number of rows needed
-  const partnerRows = partnerData.hasData ? partnerData.rows : [["No data available", "", "", "", "", "", "", "", ""]];
-  const referenceRows = referenceData.hasData ? referenceData.rows : [["No data available", "", "", "", "", "", "", "", ""]];
+  const partnerRows = partnerData.hasData
+    ? partnerData.rows
+    : [["No data available", "", "", "", "", "", "", "", ""]];
+  const referenceRows = referenceData.hasData
+    ? referenceData.rows
+    : [["No data available", "", "", "", "", "", "", "", ""]];
   const maxRows = Math.max(partnerRows.length, referenceRows.length);
-  
+
   // Create side-by-side data layout
   const combinedData: any[][] = [];
 
   console.log(`Combining data for EP component: ${title}, max rows: ${maxRows}`, combinedData);
-  
+
   for (let i = 0; i < maxRows; i++) {
-    const partnerRow = i < partnerRows.length ? partnerRows[i] : ["", "", "", "", "", "", "", "", ""];
-    const referenceRow = i < referenceRows.length ? referenceRows[i] : ["", "", "", "", "", "", "", "", ""];
-    
+    const partnerRow =
+      i < partnerRows.length ? partnerRows[i] : ["", "", "", "", "", "", "", "", ""];
+    const referenceRow =
+      i < referenceRows.length ? referenceRows[i] : ["", "", "", "", "", "", "", "", ""];
+
     // Take first 3 columns from partner, first 3 columns from reference
     // Layout: [Partner Col1, Partner Col2, Partner Col3, spacer, Reference Col1, Reference Col2, Reference Col3]
     const combinedRow = [
@@ -548,53 +839,32 @@ async function addEPComponent(
       referenceRow[1] || "", // Reference amount
       referenceRow[2] || "", // Reference amount type
       "", // Extra spacer
-      ""  // Extra spacer
+      "", // Extra spacer
     ];
-    
+
     combinedData.push(combinedRow);
   }
 
   console.log(`Combined data for EP component: ${title}`, combinedData);
-  
+
   // Add the combined data to the worksheet
   if (combinedData.length > 0) {
-    const dataRange = worksheet.getRangeByIndexes(currentRow, 0, combinedData.length, combinedData[0].length);
+    const dataRange = worksheet.getRangeByIndexes(
+      currentRow,
+      0,
+      combinedData.length,
+      combinedData[0].length
+    );
     console.log(`Adding data range for EP component: ${title} at row ${currentRow}`, dataRange);
     dataRange.values = combinedData;
-    
     // Format data borders
-    //setAllBorders(dataRange, true);
-    
-    // Format header row (first row of data) as bold if it contains headers
-    /*
-    if (combinedData.length > 0 && (
-      partnerRows[0]?.[0] === "Allowance Name" ||
-      partnerRows[0]?.[0] === "Component Name" ||
-      partnerRows[0]?.[0] === "Leave Type" ||
-      partnerRows[0]?.[0] === "Payment Type" ||
-      partnerRows[0]?.[0] === "Reimbursement Name"
-    )) {
-      const headerRange = worksheet.getRangeByIndexes(currentRow, 0, 1, 9);
-      headerRange.format.font.bold = true;
-      headerRange.format.fill.color = "#F0F8FF";
-    }
-    */
-
-    // Add alternating row colors for better readability
-    /*
-    for (let i = 1; i < combinedData.length; i += 2) {
-      const alternateRange = worksheet.getRangeByIndexes(currentRow + i, 0, 1, 9);
-      alternateRange.format.fill.color = "#F8F9FA";
-    }
-    */
+    setAllBorders(dataRange, true);
     currentRow += combinedData.length;
   }
-  
+
   // Add spacing after component
   currentRow++;
-  
   console.log(`Finished adding EP component: ${title}, next available row is ${currentRow}`);
-  
   return currentRow;
 }
 
@@ -608,4 +878,3 @@ function updateStatus(message: string, type: "loading" | "success" | "error") {
     statusDiv.className = `status ${type}`;
   }
 }
-
